@@ -1,5 +1,11 @@
 import scrapy
 
+from guardian.items  import ArticleItem
+from readability import Document
+from utils import strip_tags
+import datetime
+
+
 class GuardianCrawler(scrapy.Spider):
     name = 'guardian'
     start_urls = ['https://www.theguardian.com/au']
@@ -13,9 +19,31 @@ class GuardianCrawler(scrapy.Spider):
             yield scrapy.Request(url.extract(), self.parse_article)
     
     def parse_article(self, response):
-        yield {
-            'title': response.css('h1.content__headline::text').extract_first()
-        }
+        article = ArticleItem()
+        article['headline'] = response.css('h1.content__headline::text').extract_first().strip()
+        article['imageUrl'] = response.css('article img::attr(src)').extract_first()
+        article['url']      = response.url
+        article['author']   = response.xpath('//*[@id="article"]/div[2]/div/div[1]/div[2]/p[1]/span[1]/a/span/text()').extract_first()
+        if article['author'] == None:
+            article['author'] = response.xpath('//*[@id="article"]/header/div[1]/div/div/span/span/a/span/text()').extract_first()
+        if article['author'] == None:
+            article['author'] = response.xpath('//*[@id="article"]/div[2]/div/div[1]/div[2]/p[1]/text()').extract_first()
+        if article['author'] == None:
+            article['author'] = response.xpath('//*[@id="article"]/div/div/div[1]/div/div[2]/div[2]/p[1]/span/a/span/text()').extract_first()
+        if article['author'] == None:
+            article['author'] = response.xpath('//*[@id="article"]/div[2]/div/div[1]/div[2]/div/p[1]/span/a/span/text()').extract_first()
+
+
+
+        article['cacheDateTime']= datetime.datetime.now()
+
+        
+        article['text'] = response.css('body').extract_first()
+        #doc = Document(body)
+        #article['text'] = strip_tags(doc.summary())
+
+        yield article
+        
 
 
 
