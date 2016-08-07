@@ -8,7 +8,12 @@
 import scrapy
 
 
-class GuardianItem(scrapy.Item):
+class ArticleItem(scrapy.Item):
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    text = scrapy.Field()
+    headline = scrapy.Field()
+    author = scrapy.Field()
+    url = scrapy.Field()
+    imageUrl = scrapy.Field()
+    cacheDateTime = scrapy.Field()
+    hash = scrapy.Field()
