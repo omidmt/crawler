@@ -13,14 +13,23 @@ class GuardianCrawler(scrapy.Spider):
 
     def parse(self, response):
         for url in response.css('a[data-link-name="article"]::attr(href)'):
-            #print url.extract()
-            #print '\n\n'
+            #full_url = response.urljoin(url.extract())
+            yield scrapy.Request(url.extract(), self.parse_article)
+        
+        for url in response.css('.top-navigation__action::attr(href)'):
+            yield scrapy.Request(url.extract(), self.parse_section)
+
+
+    def parse_section(self, response):
+        for url in response.css('a[data-link-name="article"]::attr(href)'):
             #full_url = response.urljoin(url.extract())
             yield scrapy.Request(url.extract(), self.parse_article)
     
     def parse_article(self, response):
         article = ArticleItem()
         article['headline'] = response.css('h1.content__headline::text').extract_first().strip()
+        if article['headline'] == None:
+            article['headline'] = response.xpath('//*[@id="article"]/header/div[1]/div/div/h1/span/text()').extract_first().strip()
         article['imageUrl'] = response.css('article img::attr(src)').extract_first()
         article['url']      = response.url
         article['author']   = response.xpath('//*[@id="article"]/div[2]/div/div[1]/div[2]/p[1]/span[1]/a/span/text()').extract_first()
