@@ -41,7 +41,7 @@ $(document).ready(function() {
 function search() {
 	var query = $('#query').val();
 	$('#result').empty();
-	$.getJSON('http://ec2-52-65-116-213.ap-southeast-2.compute.amazonaws.com/search?query=' + query, formatResult);
+	$.getJSON('/search?query=' + query, formatResult);
 }
 
 function formatResult(data) { 
