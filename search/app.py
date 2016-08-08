@@ -23,7 +23,7 @@ def root():
 @app.route('/search', methods=['GET'])
 def search():
     query = request.args.get('query', '')
-    data = mongo.db.article_items.find({'$text': {'$search': query}} , {'_id': 0, 'text': 0, 'score': {'$meta': "textScore"}}).sort([('score', {'$meta': "textScore"})])
+    data = mongo.db.article_items.find({'$text': {'$search': query}} , {'_id': 0, 'text': 0, 'hash': 0, 'score': {'$meta': "textScore"}}).sort([('score', {'$meta': "textScore"})])
     #res = json.dumps(data, default=json_util.default)
     res = [r for r in data]
     for r in res:
