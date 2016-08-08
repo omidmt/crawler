@@ -4,6 +4,10 @@ It is running on http://ec2-52-65-4-70.ap-southeast-2.compute.amazonaws.com/
 
 The API to search is http://ec2-52-65-4-70.ap-southeast-2.compute.amazonaws.com/search?query=<keywords>
 
+Request can be simple http GET request, and the response is json list of matched articles.
+
+The text searching feature of mongodb is used for searching.
+
 The response is like 
 
 ```json
